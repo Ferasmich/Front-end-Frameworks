@@ -4,19 +4,47 @@
 
 const BASE_URL = "https://jsonplaceholder.typicode.com";
 
-// 1. Write an async function fetchPosts() that:
-//    - fetches BASE_URL + "/posts"
-//    - parses the JSON response
-//    - returns the first 5 items
-//    - logs each item's title
+// 1 & 2. Fetch the first 5 posts
+async function fetchPosts() {
+  try {
+    const res = await fetch(BASE_URL + "/posts");
 
-// 2. Add try/catch to fetchPosts().
-//    If the fetch fails, log "Failed to load posts".
+    const posts = await res.json();
 
-// 3. Write an async function getPostById(id) that:
-//    - fetches BASE_URL + "/posts/" + id
-//    - throws an Error if res.ok is false
-//    - returns the parsed JSON object
+    const firstFive = posts.slice(0, 5);
 
-// Call getPostById(1) and log the result.
-// Call getPostById(99999) — what happens? Handle it.
+    firstFive.forEach(post => {
+      console.log(post.title);
+    });
+
+    return firstFive;
+  } catch (error) {
+    console.log("Failed to load posts");
+  }
+}
+
+
+// 3. Get a post by ID
+async function getPostById(id) {
+  const res = await fetch(BASE_URL + "/posts/" + id);
+
+  if (!res.ok) {
+    throw new Error("Post not found");
+  }
+
+  const post = await res.json();
+
+  return post;
+}
+
+
+// Call getPostById(1)
+getPostById(1)
+  .then(post => console.log(post))
+  .catch(error => console.log(error.message));
+
+
+// Call getPostById(99999) and handle the error
+getPostById(99999)
+  .then(post => console.log(post))
+  .catch(error => console.log("Error:", error.message));

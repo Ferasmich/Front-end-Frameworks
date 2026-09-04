@@ -4,26 +4,30 @@
 const watchlist = ["Inception", "Interstellar"];
 const newMovies = ["Tenet", "Oppenheimer"];
 
-// 1. Create a new array that combines watchlist and newMovies. Do not mutate either.
-const combined = // your code here
+// 1. Combine arrays without mutating either
+const combined = [...watchlist, ...newMovies];
 
-// 2. Create a new array with "Dune" at the beginning of watchlist. Do not mutate watchlist.
-const withDune = // your code here
+// 2. Add "Dune" at the beginning
+const withDune = ["Dune", ...watchlist];
 
-// 3. Create a shallow copy of watchlist.
-const copy = // your code here
+// 3. Shallow copy of watchlist
+const copy = [...watchlist];
 
-// 4. Merge these two objects into one new object:
+// 4. Merge two objects
 const baseInfo = { title: "Dune", year: 2021 };
 const extraInfo = { rating: 8.0, genre: "Sci-Fi" };
-const merged = // your code here
 
-// 5. Create a new object based on baseInfo, but with rating set to 9.0:
-const updated = // your code here
+const merged = { ...baseInfo, ...extraInfo };
 
-// 6. Write a function logMovies that accepts any number of movie titles and logs each one.
-//    Call it with: logMovies("Inception", "Dune", "Tenet")
-const logMovies = // your code here
+// 5. Copy baseInfo and set rating to 9.0
+const updated = { ...baseInfo, rating: 9.0 };
 
-console.log(watchlist);  // ["Inception", "Interstellar"] — should be unchanged
-console.log(newMovies);  // ["Tenet", "Oppenheimer"] — should be unchanged
+// 6. Rest parameter
+const logMovies = (...titles) => {
+  titles.forEach(title => console.log(title));
+};
+
+logMovies("Inception", "Dune", "Tenet");
+
+console.log(watchlist);
+console.log(newMovies);

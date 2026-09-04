@@ -14,27 +14,54 @@ const movie2 = {
   // no director, no cast
 };
 
-// 1. Safely access movie2.director.name — should return undefined, not throw.
 
-// 2. Display the tagline of movie2, or "No tagline" if it is empty or missing.
-//    Use ||, not ??. The difference: ?? only falls back on null/undefined,
-//    so movie2.tagline ?? "No tagline" would return "" (empty string) instead of "No tagline".
-//    || falls back on any falsy value (null, undefined, "", 0, false), which is what you want here.
+// 1. Safely access movie2.director.name
+const directorName = movie2.director?.name;
 
-// 3. Safely get the name of the first cast member of movie2.
-//    Should return undefined, not throw.
+console.log(directorName);
+// undefined
 
-// 4. Display the first cast member's name of movie2, or "Unknown cast" as fallback.
-//    Combine ?. and ??
 
-// 5. Write a function formatPosterUrl(movie) that:
-//    - returns the full TMDB poster URL if movie.poster_path exists and is not null
-//    - returns a placeholder URL otherwise
-//    TMDB poster format : https://image.tmdb.org/t/p/w500{poster_path}
-//    Placeholder        : https://placehold.co/500x750?text=No+Image
+// 2. Display tagline, or "No tagline" if empty/missing
+const tagline = movie2.tagline || "No tagline";
 
-const tmdbMovie        = { title: "Inception", poster_path: "/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg" };
-const tmdbMovieNoPoster = { title: "Obscure Film", poster_path: null };
+console.log(tagline);
+// No tagline
+
+
+// 3. Safely get the first cast member's name
+const firstCastMember = movie2.cast?.[0]?.name;
+
+console.log(firstCastMember);
+// undefined
+
+
+// 4. Display first cast member's name, or "Unknown cast"
+const castName = movie2.cast?.[0]?.name ?? "Unknown cast";
+
+console.log(castName);
+// Unknown cast
+
+
+// 5. Format TMDB poster URL
+function formatPosterUrl(movie) {
+  if (movie.poster_path) {
+    return `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+  }
+
+  return "https://placehold.co/500x750?text=No+Image";
+}
+
+
+const tmdbMovie = {
+  title: "Inception",
+  poster_path: "/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg"
+};
+
+const tmdbMovieNoPoster = {
+  title: "Obscure Film",
+  poster_path: null
+};
 
 console.log(formatPosterUrl(tmdbMovie));         // https://image.tmdb.org/t/p/w500/oYuLEt3...
 console.log(formatPosterUrl(tmdbMovieNoPoster)); // https://placehold.co/500x750?text=No+Image
