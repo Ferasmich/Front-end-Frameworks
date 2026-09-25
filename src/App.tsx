@@ -3,8 +3,8 @@ import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { SAMPLE_MOVIES } from "./data/sampleMovies";
 import SearchBar from "./components/SearchBar";
 import MovieList from "./components/MovieList";
-import AboutPage from "./Pages/AboutPage";
-import NotFoundPage from "./Pages/NotFoundPage";
+import AboutPage from "./pages/AboutPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const App = () => {
   const [query, setQuery] = useState("");
