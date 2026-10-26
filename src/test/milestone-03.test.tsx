@@ -23,7 +23,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
 import App from '../App'
-import { AppProvider, useAppContext } from '../context/AppContext'
+import { AppProvider } from '../context/AppContext'
+import { useAppContext } from '../hooks/useAppContext'
 import type { Movie } from '../types'
 
 // ── Shared test fixtures ──────────────────────────────────────────────────────

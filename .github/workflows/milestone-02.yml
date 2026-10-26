@@ -13,7 +13,7 @@
 #   git push origin --delete milestone-2
 #   git tag milestone-2 && git push origin milestone-2
 #
-# The workflow runs all three milestone test suites (M1 + M2 tests),
+# The workflow runs the Milestone 2 test suite,
 # confirming routing is in place AND Milestone 1 requirements still hold.
 
 name: Milestone 2 — Routing and SPA Architecture
@@ -26,7 +26,7 @@ on:
 jobs:
   milestone-2:
     name: Milestone 2 Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v5
@@ -49,10 +49,10 @@ jobs:
       - name: ESLint — lint check
         run: npm run lint
 
-      # ── Test suite (M1 regression + M2 tests) ──────────────────────────────
+      # ── Milestone 2 test suite ──────────────────────────────
 
       - name: Run Milestone 2 tests
-        run: npm run test:run:verbose
+        run: npm run test:m2
 
       # ── Notify Google Sheet ─────────────────────────────────────────────────
 

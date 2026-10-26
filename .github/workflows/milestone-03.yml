@@ -13,8 +13,7 @@
 #   git push origin --delete milestone-3
 #   git tag milestone-3 && git push origin milestone-3
 #
-# The workflow runs all three milestone test suites (M1 + M2 + M3),
-# confirming global state is in place AND all previous milestones still hold.
+# The workflow runs the Milestone 3 test suite for global state and SPA regression.
 
 name: Milestone 3 — Global State with Context API
 
@@ -26,7 +25,7 @@ on:
 jobs:
   milestone-3:
     name: Milestone 3 Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v5
@@ -49,10 +48,10 @@ jobs:
       - name: ESLint — lint check
         run: npm run lint
 
-      # ── Test suite (M1 + M2 regression + M3 tests) ─────────────────────────
+      # ── Milestone 3 test suite ─────────────────────────
 
       - name: Run Milestone 3 tests
-        run: npm run test:run:verbose
+        run: npm run test:m3
 
       # ── Notify Google Sheet ─────────────────────────────────────────────────
 

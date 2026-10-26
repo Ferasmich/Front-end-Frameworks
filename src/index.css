@@ -1013,3 +1013,22 @@ select {
     gap: 12px;
   }
 }
+
+/* React navigation, page content, and accessible interactions. */
+nav[aria-label="Main navigation"] { display: flex; gap: 18px; }
+nav[aria-label="Main navigation"] a.active { color: var(--accent); }
+.page-intro { margin: 0 0 24px; }
+.page-intro p, .info-page p { color: var(--text-muted); }
+.stat-info { display: flex; flex-direction: column; }
+.api-config-dialog { max-width: 540px; padding: 40px; }
+.api-config-dialog form { display: grid; gap: 18px; }
+.api-config-dialog .search-input { width: 100%; padding-left: 14px; }
+.info-page { display: grid; gap: 24px; }
+.info-page a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.favorite-btn { opacity: 1; }
+.movie-card:focus-within .poster-overlay { opacity: 1; }
+.btn-primary, .btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+@media (max-width: 900px) { .header-inner { flex-wrap: wrap; } .header-search { order: 3; width: 100%; max-width: none; } .header-actions { margin-left: auto; } }
+@media (max-width: 540px) { .header-actions { flex-wrap: wrap; } .filter-bar { align-items: stretch; } .filter-actions-right { justify-content: space-between; } .api-config-dialog { padding: 32px 20px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

@@ -19,8 +19,8 @@
  * Use `npm run test:m1` to run this file in isolation.
  */
 
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { render as rtlRender, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // These imports will produce clear errors if the files are missing —
 // that error message tells you exactly which component to create next.
@@ -29,6 +29,12 @@ import MovieList from "../components/MovieList";
 import SearchBar from "../components/SearchBar";
 import App from "../App";
 import type { Movie } from "../types";
+
+import { AppProvider } from '../context/AppContext';
+import type { ReactElement } from 'react';
+// Session 5 consumers require the same provider used by the application.
+const render = (ui: ReactElement) => rtlRender(ui.type === App ? ui : <AppProvider>{ui}</AppProvider>);
+beforeEach(() => localStorage.clear());
 
 // ── Shared test fixtures ──────────────────────────────────────────────────────
 
