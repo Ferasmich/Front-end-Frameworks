@@ -54,8 +54,11 @@ because they may require separate compatibility work.
 
 ## Cleanup
 
-Publish `main` and make it the GitHub default before removing `01` and `02`.
-Both branch tips and every milestone tag must be ancestors of published `main`.
+Published `main` and confirmed GitHub now uses it as the default. Verified both
+old branch tips and all four existing tags are ancestors of `origin/main`, then
+deleted `01` and `02` remotely and locally using normal branch deletion.
+The only local development branch and origin branch is now `main`; origin/HEAD
+points to origin/main. All four tag object IDs match the initial remote inventory.
 The pre-cleanup GitHub inspection found no open pull requests, running Actions,
 branch protections/rulesets or deployments; the Pages endpoint returned 404.
 Workflows contain no old-branch dependencies. No observable active dependency
