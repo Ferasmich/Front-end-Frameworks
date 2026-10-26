@@ -1019,6 +1019,8 @@ nav[aria-label="Main navigation"] { display: flex; gap: 18px; }
 nav[aria-label="Main navigation"] a.active { color: var(--accent); }
 .page-intro { margin: 0 0 24px; }
 .page-intro p, .info-page p { color: var(--text-muted); }
+.surprise-button { margin-top: 12px; }
+.surprise-button:disabled { opacity: 0.5; cursor: not-allowed; }
 .stat-info { display: flex; flex-direction: column; }
 .api-config-dialog { max-width: 540px; padding: 40px; }
 .api-config-dialog form { display: grid; gap: 18px; }

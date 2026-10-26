@@ -24,9 +24,16 @@ export default function HomePage() {
     const { movies, total_pages, total_results, isLiveApi, isLoading, error } = useMovies({ search, genre, sort, onlyFavorites, favorites, page }, refreshKey);
     const closeMovie = useCallback(() => setSelected(null), []);
     const closeApi = useCallback(() => setApiOpen(false), []);
+    function surpriseMe() {
+        if (isLoading || movies.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * movies.length);
+        setSelected(movies[randomIndex]);
+    }
     function reset() { setSearch(''); setGenre(0); setOnlyFavorites(false); setSort('popularity'); setPage(1); }
     return <><Header search={search} onSearch={value => { setSearch(value); setPage(1); }} onlyFavorites={onlyFavorites} onToggleFavorites={() => { setOnlyFavorites(v => !v); setPage(1); }} onOpenApiConfig={() => setApiOpen(true)}/>
-    <main className="main-container"><div className="page-intro"><h1>{onlyFavorites ? 'Your Watchlist' : 'Discover Movies'}</h1><p>Find your next favourite film.</p></div>
+    <main className="main-container"><div className="page-intro"><h1>{onlyFavorites ? 'Your Watchlist' : 'Discover Movies'}</h1><p>Find your next favourite film.</p>
+      <button type="button" className="btn-icon-label surprise-button" onClick={surpriseMe} disabled={isLoading || movies.length === 0}>🎲 Surprise Me</button>
+    </div>
       <StatsBanner movies={movies} total={total_results} genre={genres.find(g => g.id === genre)?.name ?? 'All Genres'} live={isLiveApi}/>
       <FilterBar genres={genres} genre={genre} onGenre={id => { setGenre(id); setPage(1); }} sort={sort} onSort={value => { setSort(value); setPage(1); }} compact={compact} onView={setCompact}/>
       {genreError && <p role="status">Genre names could not be refreshed. Using the offline genre list.</p>}

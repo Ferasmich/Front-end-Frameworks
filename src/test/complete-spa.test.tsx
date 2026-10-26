@@ -5,6 +5,34 @@ import { useMovies } from '../hooks/useMovies';
 import { useAppContext } from '../hooks/useAppContext';
 beforeEach(() => { localStorage.clear(); window.history.replaceState({}, '', '/'); vi.stubEnv('VITE_TMDB_API_KEY', ''); });
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
+it('opens a random movie from the current filtered list without fetching', () => {
+  const fetch = vi.fn();
+  vi.stubGlobal('fetch', fetch);
+  render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: 'Animation' }));
+  const cards = screen.getAllByRole('article');
+  const random = vi.spyOn(Math, 'random').mockReturnValue(0.99);
+  try {
+    fireEvent.click(screen.getByRole('button', { name: /Surprise Me/ }));
+    expect(screen.getByRole('dialog', { name: cards[cards.length - 1].getAttribute('aria-label')! })).toBeInTheDocument();
+    expect(fetch).not.toHaveBeenCalled();
+  } finally { random.mockRestore(); }
+});
+it('disables Surprise Me when the current list is empty', () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: /Watchlist 0/ }));
+  const button = screen.getByRole('button', { name: /Surprise Me/ });
+  expect(button).toBeDisabled();
+  fireEvent.click(button);
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+});
+it('disables Surprise Me while movies are loading', () => {
+  localStorage.setItem('cinegrid_api_key', 'key');
+  vi.stubGlobal('fetch', vi.fn(() => new Promise(() => {})));
+  render(<App />);
+  expect(screen.getByText('Loading movies...')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Surprise Me/ })).toBeDisabled();
+});
 it('synchronizes modal, card, header and persisted watchlist, and restores scroll and focus', () => {
   render(<App />);
   const card = screen.getByRole('article', { name: 'Avatar: The Way of Water' });
