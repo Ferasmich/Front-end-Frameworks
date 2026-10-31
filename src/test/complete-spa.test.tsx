@@ -1,37 +1,40 @@
 import { render, screen, fireEvent, within, waitFor, renderHook } from '@testing-library/react';
 import { beforeEach, afterEach, expect, it, vi } from 'vitest';
 import App from '../App';
+import { SAMPLE_MOVIES } from '../data/sampleMovies';
 import { useMovies } from '../hooks/useMovies';
 import { useAppContext } from '../hooks/useAppContext';
 beforeEach(() => { localStorage.clear(); window.history.replaceState({}, '', '/'); vi.stubEnv('VITE_TMDB_API_KEY', ''); });
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
-it('opens a random movie from the current filtered list without fetching', () => {
+it('opens a random offline discovery movie independently of the current filter', async () => {
   const fetch = vi.fn();
   vi.stubGlobal('fetch', fetch);
   render(<App />);
   fireEvent.click(screen.getByRole('button', { name: 'Animation' }));
-  const cards = screen.getAllByRole('article');
   const random = vi.spyOn(Math, 'random').mockReturnValue(0.99);
   try {
     fireEvent.click(screen.getByRole('button', { name: /Surprise Me/ }));
-    expect(screen.getByRole('dialog', { name: cards[cards.length - 1].getAttribute('aria-label')! })).toBeInTheDocument();
+    expect(await screen.findByRole('dialog', { name: SAMPLE_MOVIES[Math.floor(0.99 * SAMPLE_MOVIES.length)].title })).toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
   } finally { random.mockRestore(); }
 });
-it('disables Surprise Me when the current list is empty', () => {
+it('discovers a movie even when the watchlist is empty', async () => {
   render(<App />);
   fireEvent.click(screen.getByRole('button', { name: /Watchlist 0/ }));
   const button = screen.getByRole('button', { name: /Surprise Me/ });
-  expect(button).toBeDisabled();
+  expect(button).toBeEnabled();
   fireEvent.click(button);
-  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  expect(await screen.findByRole('dialog')).toBeInTheDocument();
 });
-it('disables Surprise Me while movies are loading', () => {
+it('loads recommendations independently and disables the button during their request', () => {
   localStorage.setItem('cinegrid_api_key', 'key');
   vi.stubGlobal('fetch', vi.fn(() => new Promise(() => {})));
   render(<App />);
   expect(screen.getByText('Loading movies...')).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /Surprise Me/ })).toBeDisabled();
+  const button = screen.getByRole('button', { name: /Surprise Me/ });
+  expect(button).toBeEnabled();
+  fireEvent.click(button);
+  expect(button).toBeDisabled();
 });
 it('synchronizes modal, card, header and persisted watchlist, and restores scroll and focus', () => {
   render(<App />);

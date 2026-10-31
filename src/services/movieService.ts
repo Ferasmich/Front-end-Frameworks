@@ -26,6 +26,24 @@ export function getLocalMovies({ search = '', genre = 0, sort, onlyFavorites, fa
     return { results, total_pages: 1, total_results: results.length, isLiveApi: false };
 }
 export const movieService = {
+    async fetchRecommendationPool(genre?: number): Promise<Movie[]> {
+        if (!getCredential()) {
+            return getLocalMovies({ genre }).results;
+        }
+        const movies: Movie[] = [];
+        let totalPages = 5;
+        for (let page = 1; page <= Math.min(5, totalPages); page++) {
+            const params: Record<string, string> = { page: String(page), sort_by: 'popularity.desc' };
+            if (genre !== undefined) params.with_genres = String(genre);
+            const data = await request('/discover/movie', params);
+            if (!Array.isArray(data.results)) {
+                throw new Error('TMDB returned an invalid movie response.');
+            }
+            movies.push(...data.results);
+            totalPages = data.total_pages ?? 1;
+        }
+        return movies;
+    },
     async fetchMovies(filters: MovieFilters = {}): Promise<MovieResponse> {
         if (!getCredential() || filters.onlyFavorites)
             return getLocalMovies(filters);

@@ -1,4 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { movieService } from '../services/movieService';
+import { getPreferredGenre, pickRecommendation } from '../utils/recommendation';
 import Header from '../components/Header';
 import FilterBar from '../components/FilterBar';
 import StatsBanner from '../components/StatsBanner';
@@ -21,6 +23,10 @@ export default function HomePage() {
     const [apiOpen, setApiOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
 
+    const [surpriseLoading, setSurpriseLoading] = useState(false);
+    const [surpriseMessage, setSurpriseMessage] = useState('');
+    const surprisePending = useRef(false);
+
     const { favorites } = useAppContext();
     const { genres, error: genreError } = useGenres(refreshKey);
     const {
@@ -38,10 +44,29 @@ export default function HomePage() {
     const closeMovie = useCallback(() => setSelected(null), []);
     const closeApi = useCallback(() => setApiOpen(false), []);
 
-    function surpriseMe() {
-        if (isLoading || movies.length === 0) return;
-        const randomIndex = Math.floor(Math.random() * movies.length);
-        setSelected(movies[randomIndex]);
+    async function surpriseMe() {
+        if (surprisePending.current) return;
+        surprisePending.current = true;
+        setSurpriseLoading(true);
+        setSurpriseMessage('');
+        try {
+            const preferred = getPreferredGenre(favorites);
+            const pool = await movieService.fetchRecommendationPool(preferred);
+            // Broaden to displayed movies when no unseen matching movie exists.
+            const hasUnseenMatch = pool.some(movie => !favorites.some(favorite => favorite.id === movie.id));
+            const chosen = pickRecommendation(hasUnseenMatch ? pool : [...pool, ...movies], favorites);
+            if (chosen) setSelected(chosen);
+            else setSurpriseMessage('No movies available. Try again or change your filters.');
+        } catch {
+            const fallback = pickRecommendation(movies, favorites);
+            setSurpriseMessage(fallback
+                ? 'Could not reach TMDB. Showing a movie from the current list.'
+                : 'Could not reach TMDB and no movies are available. Please try again.');
+            if (fallback) setSelected(fallback);
+        } finally {
+            surprisePending.current = false;
+            setSurpriseLoading(false);
+        }
     }
 
     function reset() {
@@ -76,11 +101,13 @@ export default function HomePage() {
                         type="button"
                         className="btn-icon-label surprise-button"
                         onClick={surpriseMe}
-                        disabled={isLoading || movies.length === 0}
+                        disabled={surpriseLoading}
                     >
-                        🎲 Surprise Me
+                        {surpriseLoading ? 'Finding a movie...' : '🎲 Smart Surprise Me'}
                     </button>
                 </div>
+
+                {surpriseMessage && <p role="status">{surpriseMessage}</p>}
 
                 <StatsBanner
                     movies={movies}
